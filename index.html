@@ -168,7 +168,7 @@ $('pcGo').onclick=async function(){
     var info=document.createElement('div'),nameEl=document.createElement('b'),logEl=document.createElement('span');
     nameEl.textContent=files[i].name;info.appendChild(nameEl);info.appendChild(logEl);item.appendChild(info);
     try{
-      var r=await clean(files[i],o),name='cleaned-'+files[i].name;
+      var r=await clean(files[i],o),name=files[i].name;
       var url=URL.createObjectURL(new Blob([r.bytes],{type:'application/pdf'}));
       done.push({name:name,url:url,bytes:r.bytes});
       logEl.textContent=r.log;
@@ -187,7 +187,7 @@ $('pcZip').onclick=async function(){
   if(!window.JSZip||!done.length)return;
   var z=new JSZip();done.forEach(function(d){z.file(d.name,d.bytes)});
   var blob=await z.generateAsync({type:'blob'}),a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);a.download='cleaned-pdfs.zip';document.body.appendChild(a);a.click();a.remove();
+  a.href=URL.createObjectURL(blob);a.download='pdfs.zip';document.body.appendChild(a);a.click();a.remove();
 };
 })();
 </script>
