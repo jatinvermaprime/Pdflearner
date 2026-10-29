@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PDF Cleaner</title>
+</head>
+<body style="margin:0;padding:8px;background:#f3f7f5">
+<div id="pcx">
+<style>
+#pcx{--ink:#16231f;--mut:#5d6b66;--line:#d9e1dd;--acc:#0f5c4d;--accd:#0a4338;--soft:#f3f7f5;max-width:760px;margin:24px auto;padding:22px;box-sizing:border-box;background:#fff;color:var(--ink);border:1px solid var(--line);border-radius:12px;font:16px/1.55 Georgia,"Times New Roman",serif}
+#pcx *{box-sizing:border-box}
+#pcx h2{margin:0 0 4px;font-size:1.6rem;line-height:1.2;color:var(--ink)}
+#pcx p.sub{margin:0 0 18px;color:var(--mut)}
+#pcx .drop{display:block;padding:22px 14px;text-align:center;border:2px dashed var(--acc);border-radius:10px;background:var(--soft);cursor:pointer;font-weight:700;color:var(--acc)}
+#pcx .drop:hover,#pcx .drop:focus-within{background:#e6f0ec}
+#pcx .drop input{display:block;width:100%;margin-top:12px;font:15px system-ui,sans-serif;color:var(--ink)}
+#pcx .drop input::file-selector-button{margin-right:12px;padding:10px 16px;border:0;border-radius:8px;background:var(--acc);color:#fff;font:700 15px system-ui,sans-serif;cursor:pointer}
+#pcx .files{margin:8px 0 0;color:var(--mut);font-size:.92rem;font-family:system-ui,sans-serif}
+#pcx fieldset{margin:18px 0 0;padding:14px;border:1px solid var(--line);border-radius:10px}
+#pcx legend{padding:0 6px;font-weight:700}
+#pcx label.opt{display:flex;gap:10px;align-items:flex-start;margin:8px 0;cursor:pointer}
+#pcx label.opt input{margin-top:6px;accent-color:var(--acc);width:18px;height:18px;flex:none}
+#pcx label.opt small{display:block;color:var(--mut);font-family:system-ui,sans-serif;font-size:.85rem}
+#pcx input[type=text]{width:100%;margin-top:6px;padding:10px;border:1px solid var(--line);border-radius:8px;font:15px system-ui,sans-serif}
+#pcx button,#pcx a.dl{display:inline-block;padding:12px 18px;border:0;border-radius:8px;background:var(--acc);color:#fff;font:700 15px system-ui,sans-serif;text-decoration:none;cursor:pointer}
+#pcx button:hover,#pcx a.dl:hover{background:var(--accd)}
+#pcx button:disabled{opacity:.5;cursor:wait}
+#pcx button.alt{background:#fff;color:var(--acc);border:2px solid var(--acc)}
+#pcx button:focus-visible,#pcx a.dl:focus-visible,#pcx input:focus-visible{outline:3px solid #e0a100;outline-offset:2px}
+#pcx .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;align-items:center}
+#pcx .status{color:var(--mut);font:14px system-ui,sans-serif}
+#pcx .res{margin-top:22px}
+#pcx .res h3{margin:0 0 8px;font-size:1.15rem}
+#pcx .item{display:flex;gap:12px;justify-content:space-between;align-items:center;flex-wrap:wrap;padding:12px 0;border-top:1px solid var(--line)}
+#pcx .item b{display:block;word-break:break-all}
+#pcx .item span{display:block;color:var(--mut);font:13px system-ui,sans-serif}
+#pcx .err{color:#a02323}
+@media(max-width:480px){#pcx{padding:14px;margin:12px 0}}
+</style>
+
+<h2>PDF Cleaner</h2>
+<p class="sub">Select several PDFs, choose what to remove, and process them all at once. Everything happens in your browser.</p>
+
+<label class="drop" for="pcFiles">Select PDF files<input id="pcFiles" type="file" accept=".pdf,application/pdf" multiple></label>
+<div class="files" id="pcList">No files selected.</div>
+
+<fieldset>
+<legend>What to remove</legend>
+<label class="opt"><input type="checkbox" id="oLinks" checked><span>All links and hidden links<small>Removes every clickable area, annotation and link action. Page content stays untouched.</small></span></label>
+<label class="opt"><input type="checkbox" id="oMeta" checked><span>Metadata and hidden extras<small>Title, author, producer, XMP data, auto-open actions, embedded scripts and attachments.</small></span></label>
+<label class="opt"><input type="checkbox" id="oPages" checked><span>Promotional pages with these words<small>Deletes a page only if it contains one of the words below and has little other text.</small></span></label>
+<input type="text" id="oKw" value="t.me, telegram, join our channel, whatsapp.com/channel, instagram.com, youtube.com/@" aria-label="Promo words, comma separated">
+<label class="opt"><input type="checkbox" id="oFirst"><span>Delete the first page</span></label>
+<label class="opt"><input type="checkbox" id="oLast"><span>Delete the last page</span></label>
+</fieldset>
+
+<fieldset>
+<legend>Add your own footer (optional)</legend>
+<label for="oFoot" style="font:14px system-ui,sans-serif;color:var(--mut)">Small text at the bottom of every page. Use English letters, numbers and common symbols.</label>
+<input type="text" id="oFoot" placeholder="Join t.me/yourchannel for more">
+</fieldset>
+
+<div class="row"><button id="pcGo" type="button">Process all PDFs</button><span class="status" id="pcStatus" role="status"></span></div>
+
+<div class="res" id="pcRes" hidden>
+<h3>Processed PDF files</h3>
+<div id="pcOut"></div>
+<div class="row"><button id="pcAll" type="button">Download all PDFs</button><button id="pcZip" type="button" class="alt">Download as ZIP</button></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+(function(){
+var R=document.getElementById('pcx'),$=function(i){return R.querySelector('#'+i)};
+var files=[],done=[];
+$('pcFiles').onchange=function(e){files=Array.prototype.slice.call(e.target.files);$('pcList').textContent=files.length?files.length+' file(s): '+files.map(function(f){return f.name}).join(', '):'No files selected.'};
+if(!window.PDFLib||!window.pdfjsLib){$('pcStatus').textContent='Could not load PDF libraries. Check your connection and reload.';$('pcStatus').className='status err';return}
+pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+var PDFDocument=PDFLib.PDFDocument,PDFName=PDFLib.PDFName,PDFDict=PDFLib.PDFDict,rgb=PDFLib.rgb;
+
+async function clean(file,o){
+  var buf=await file.arrayBuffer(),log=[],drop=new Set(),n=0;
+  var needText=o.pages&&o.kws.length;
+  if(needText||o.first||o.last){
+    var doc=await pdfjsLib.getDocument({data:buf.slice(0)}).promise;n=doc.numPages;
+    if(o.first&&n>1)drop.add(0);
+    if(o.last&&n>1)drop.add(n-1);
+    if(needText){
+      for(var i=1;i<=n;i++){
+        var p=await doc.getPage(i),tc=await p.getTextContent();
+        var text=tc.items.map(function(x){return x.str}).join(' ').toLowerCase();
+        var ann=await p.getAnnotations();
+        var urls=ann.map(function(a){return(a.url||a.unsafeUrl||'')}).join(' ').toLowerCase();
+        var hit=o.kws.some(function(k){return text.indexOf(k)>-1||urls.indexOf(k)>-1});
+        if(hit&&text.length<o.maxText)drop.add(i-1);
+      }
+    }
+    await doc.destroy();
+    if(drop.size>=n){drop.clear();log.push('page deletion skipped (it would remove every page)')}
+  }
+  var pdf=await PDFDocument.load(buf,{ignoreEncryption:true,updateMetadata:false});
+  var gone=Array.from(drop).sort(function(a,b){return b-a});
+  gone.forEach(function(i){pdf.removePage(i)});
+  if(gone.length)log.unshift('deleted page'+(gone.length>1?'s ':' ')+gone.map(function(i){return i+1}).reverse().join(', '));
+  if(o.links){
+    var c=0;
+    pdf.getPages().forEach(function(pg){var a=pg.node.Annots();if(a)c+=a.size();pg.node.delete(PDFName.of('Annots'))});
+    log.push(c+' link/annotation'+(c===1?'':'s')+' removed');
+  }
+  if(o.meta){
+    var cat=pdf.catalog;
+    ['OpenAction','AA','Metadata'].forEach(function(k){cat.delete(PDFName.of(k))});
+    var nm=cat.lookupMaybe(PDFName.of('Names'),PDFDict);
+    if(nm){nm.delete(PDFName.of('JavaScript'));nm.delete(PDFName.of('EmbeddedFiles'))}
+    pdf.context.trailerInfo.Info=undefined;
+    log.push('metadata cleared');
+  }
+  if(o.foot){
+    try{
+      var f=await pdf.embedFont(PDFLib.StandardFonts.Helvetica);
+      pdf.getPages().forEach(function(pg){
+        var w=pg.getWidth(),s=Math.max(8,w*0.016),tw=f.widthOfTextAtSize(o.foot,s);
+        pg.drawText(o.foot,{x:Math.max(4,(w-tw)/2),y:s*0.9,size:s,font:f,color:rgb(.25,.25,.25)});
+      });
+      log.push('footer added');
+    }catch(e){log.push('footer skipped (use English letters only)')}
+  }
+  var bytes=await pdf.save();
+  return{bytes:bytes,log:log.join(' · ')||'no changes selected'};
+}
+
+$('pcGo').onclick=async function(){
+  if(!files.length){$('pcStatus').textContent='Select at least one PDF first.';$('pcStatus').className='status err';return}
+  var o={links:$('oLinks').checked,meta:$('oMeta').checked,pages:$('oPages').checked,first:$('oFirst').checked,last:$('oLast').checked,
+    kws:$('oKw').value.split(',').map(function(s){return s.trim().toLowerCase()}).filter(Boolean),
+    maxText:600,foot:$('oFoot').value.trim()};
+  var btn=$('pcGo');btn.disabled=true;$('pcStatus').className='status';
+  done.forEach(function(d){URL.revokeObjectURL(d.url)});done=[];$('pcOut').innerHTML='';
+  for(var i=0;i<files.length;i++){
+    $('pcStatus').textContent='Processing '+(i+1)+' of '+files.length+'…';
+    var item=document.createElement('div');item.className='item';
+    var info=document.createElement('div'),nameEl=document.createElement('b'),logEl=document.createElement('span');
+    nameEl.textContent=files[i].name;info.appendChild(nameEl);info.appendChild(logEl);item.appendChild(info);
+    try{
+      var r=await clean(files[i],o),name='cleaned-'+files[i].name;
+      var url=URL.createObjectURL(new Blob([r.bytes],{type:'application/pdf'}));
+      done.push({name:name,url:url,bytes:r.bytes});
+      logEl.textContent=r.log;
+      var a=document.createElement('a');a.className='dl';a.href=url;a.download=name;a.textContent='Download';item.appendChild(a);
+    }catch(e){logEl.textContent='Could not process this file. It may be damaged or password-protected.';logEl.className='err'}
+    $('pcOut').appendChild(item);
+  }
+  $('pcRes').hidden=!$('pcOut').children.length;
+  $('pcStatus').textContent='Done: '+done.length+' of '+files.length+' processed.';
+  btn.disabled=false;
+};
+
+$('pcAll').onclick=function(){
+  done.forEach(function(d,i){setTimeout(function(){var a=document.createElement('a');a.href=d.url;a.download=d.name;document.body.appendChild(a);a.click();a.remove()},i*400)});
+};
+$('pcZip').onclick=async function(){
+  if(!window.JSZip||!done.length)return;
+  var z=new JSZip();done.forEach(function(d){z.file(d.name,d.bytes)});
+  var blob=await z.generateAsync({type:'blob'}),a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);a.download='cleaned-pdfs.zip';document.body.appendChild(a);a.click();a.remove();
+};
+})();
+</script>
+</div>
+</body>
+</html>
