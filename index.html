@@ -1,71 +1,60 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PDF Cleaner</title>
-</head>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>PDF Cleaner</title></head>
 <body style="margin:0;padding:8px;background:#f3f7f5">
 <div id="pcx">
 <style>
-#pcx{--ink:#16231f;--mut:#5d6b66;--line:#d9e1dd;--acc:#0f5c4d;--accd:#0a4338;--soft:#f3f7f5;max-width:760px;margin:24px auto;padding:22px;box-sizing:border-box;background:#fff;color:var(--ink);border:1px solid var(--line);border-radius:12px;font:16px/1.55 Georgia,"Times New Roman",serif}
+#pcx{--acc:#0f5c4d;--mut:#5d6b66;--line:#d9e1dd;max-width:760px;margin:16px auto;padding:20px;background:#fff;color:#16231f;border:1px solid var(--line);border-radius:12px;font:16px/1.5 Georgia,serif}
 #pcx *{box-sizing:border-box}
-#pcx h2{margin:0 0 4px;font-size:1.6rem;line-height:1.2;color:var(--ink)}
-#pcx p.sub{margin:0 0 18px;color:var(--mut)}
-#pcx .drop{display:block;padding:22px 14px;text-align:center;border:2px dashed var(--acc);border-radius:10px;background:var(--soft);cursor:pointer;font-weight:700;color:var(--acc)}
-#pcx .drop:hover,#pcx .drop:focus-within{background:#e6f0ec}
-#pcx .drop input{display:block;width:100%;margin-top:12px;font:15px system-ui,sans-serif;color:var(--ink)}
-#pcx .drop input::file-selector-button{margin-right:12px;padding:10px 16px;border:0;border-radius:8px;background:var(--acc);color:#fff;font:700 15px system-ui,sans-serif;cursor:pointer}
-#pcx .files{margin:8px 0 0;color:var(--mut);font-size:.92rem;font-family:system-ui,sans-serif}
-#pcx fieldset{margin:18px 0 0;padding:14px;border:1px solid var(--line);border-radius:10px}
+#pcx h2{margin:0 0 4px}
+#pcx .sub,#pcx small,#pcx .files,#pcx .status,#pcx .item span{color:var(--mut);font:14px system-ui,sans-serif}
+#pcx .item span,#pcx small{display:block}
+#pcx .drop{display:block;padding:18px 12px;text-align:center;border:2px dashed var(--acc);border-radius:10px;background:#f3f7f5;font-weight:700;color:var(--acc)}
+#pcx input[type=file]{display:block;width:100%;margin-top:10px;font:15px system-ui,sans-serif}
+#pcx input[type=file]::file-selector-button{margin-right:10px;padding:10px 14px;border:0;border-radius:8px;background:var(--acc);color:#fff;font:700 15px system-ui,sans-serif}
+#pcx fieldset{margin:16px 0 0;padding:12px;border:1px solid var(--line);border-radius:10px}
 #pcx legend{padding:0 6px;font-weight:700}
-#pcx label.opt{display:flex;gap:10px;align-items:flex-start;margin:8px 0;cursor:pointer}
-#pcx label.opt input{margin-top:6px;accent-color:var(--acc);width:18px;height:18px;flex:none}
-#pcx label.opt small{display:block;color:var(--mut);font-family:system-ui,sans-serif;font-size:.85rem}
-#pcx input[type=text]{width:100%;margin-top:6px;padding:10px;border:1px solid var(--line);border-radius:8px;font:15px system-ui,sans-serif}
-#pcx button,#pcx a.dl{display:inline-block;padding:12px 18px;border:0;border-radius:8px;background:var(--acc);color:#fff;font:700 15px system-ui,sans-serif;text-decoration:none;cursor:pointer}
-#pcx button:hover,#pcx a.dl:hover{background:var(--accd)}
-#pcx button:disabled{opacity:.5;cursor:wait}
+#pcx .opt{display:flex;gap:10px;margin:8px 0;align-items:flex-start}
+#pcx .opt input{margin-top:5px;width:18px;height:18px;flex:none;accent-color:var(--acc)}
+#pcx input[type=text],#pcx input[type=number],#pcx select{width:100%;margin-top:6px;padding:10px;border:1px solid var(--line);border-radius:8px;font:15px system-ui,sans-serif;background:#fff}
+#pcx button,#pcx a.dl{display:inline-block;padding:12px 16px;border:0;border-radius:8px;background:var(--acc);color:#fff;font:700 15px system-ui,sans-serif;text-decoration:none}
 #pcx button.alt{background:#fff;color:var(--acc);border:2px solid var(--acc)}
-#pcx button:focus-visible,#pcx a.dl:focus-visible,#pcx input:focus-visible{outline:3px solid #e0a100;outline-offset:2px}
-#pcx .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;align-items:center}
-#pcx .status{color:var(--mut);font:14px system-ui,sans-serif}
-#pcx .res{margin-top:22px}
-#pcx .res h3{margin:0 0 8px;font-size:1.15rem}
-#pcx .item{display:flex;gap:12px;justify-content:space-between;align-items:center;flex-wrap:wrap;padding:12px 0;border-top:1px solid var(--line)}
-#pcx .item b{display:block;word-break:break-all}
-#pcx .item span{display:block;color:var(--mut);font:13px system-ui,sans-serif}
+#pcx button:disabled{opacity:.5}
+#pcx .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;align-items:center}
+#pcx .item{display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap;padding:10px 0;border-top:1px solid var(--line)}
+#pcx .item b{word-break:break-all}
 #pcx .err{color:#a02323}
-@media(max-width:480px){#pcx{padding:14px;margin:12px 0}}
 </style>
-
 <h2>PDF Cleaner</h2>
-<p class="sub">Select several PDFs, choose what to remove, and process them all at once. Everything happens in your browser.</p>
-
+<p class="sub">Select several PDFs, choose what to change, and process them all at once. Everything happens in your browser.</p>
 <label class="drop" for="pcFiles">Select PDF files<input id="pcFiles" type="file" accept=".pdf,application/pdf" multiple></label>
 <div class="files" id="pcList">No files selected.</div>
 
-<fieldset>
-<legend>What to remove</legend>
-<label class="opt"><input type="checkbox" id="oLinks" checked><span>All links and hidden links<small>Removes every clickable area, annotation and link action. Page content stays untouched.</small></span></label>
-<label class="opt"><input type="checkbox" id="oMeta" checked><span>Metadata and hidden extras<small>Title, author, producer, XMP data, auto-open actions, embedded scripts and attachments.</small></span></label>
-<label class="opt"><input type="checkbox" id="oPages" checked><span>Promotional pages with these words<small>Deletes a page only if it contains one of the words below and has little other text.</small></span></label>
-<input type="text" id="oKw" value="t.me, telegram, join our channel, whatsapp.com/channel, instagram.com, youtube.com/@" aria-label="Promo words, comma separated">
+<fieldset><legend>What to remove</legend>
+<label class="opt"><input type="checkbox" id="oLinks" checked><span>All links and hidden links</span></label>
+<label class="opt"><input type="checkbox" id="oMeta" checked><span>Metadata and hidden extras</span></label>
+<label class="opt"><input type="checkbox" id="oPages" checked><span>Promotional pages with these words<small>Deleted only if the page has little other text.</small></span></label>
+<input type="text" id="oKw" value="t.me, telegram, join our channel, whatsapp.com/channel, instagram.com" aria-label="Promo words">
 <label class="opt"><input type="checkbox" id="oFirst"><span>Delete the first page</span></label>
 <label class="opt"><input type="checkbox" id="oLast"><span>Delete the last page</span></label>
 </fieldset>
 
-<fieldset>
-<legend>Add your own footer (optional)</legend>
-<label for="oFoot" style="font:14px system-ui,sans-serif;color:var(--mut)">Small text at the bottom of every page. Use English letters, numbers and common symbols.</label>
-<input type="text" id="oFoot" placeholder="Join t.me/yourchannel for more">
+<fieldset><legend>Add my footer (optional)</legend>
+<input type="text" id="oFoot" placeholder="Footer text, e.g. Join CUET Network">
+<input type="text" id="oFootUrl" placeholder="Footer link, e.g. t.me/cuetnetwork (tappable)">
+<small style="margin-top:8px">Skip the footer on the first this many pages:</small>
+<input type="number" id="oSkip" value="5" min="0" max="50" inputmode="numeric">
+</fieldset>
+
+<fieldset><legend>Add my promo page (optional)</legend>
+<small>Design it in Canva and export as PNG, JPG or PDF. It is added to every PDF.</small>
+<input type="file" id="oPromo" accept="image/png,image/jpeg,.png,.jpg,.jpeg,.pdf,application/pdf">
+<select id="oPos" aria-label="Where to add the promo page"><option value="midend">In the middle and at the end</option><option value="middle">Only in the middle</option><option value="end">Only at the end</option></select>
+<input type="text" id="oPromoUrl" placeholder="Promo page link, e.g. t.me/cuetnetwork (tappable)">
 </fieldset>
 
 <div class="row"><button id="pcGo" type="button">Process all PDFs</button><span class="status" id="pcStatus" role="status"></span></div>
-
-<div class="res" id="pcRes" hidden>
-<h3>Processed PDF files</h3>
-<div id="pcOut"></div>
+<div id="pcRes" hidden style="margin-top:20px">
+<h3>Processed PDF files</h3><div id="pcOut"></div>
 <div class="row"><button id="pcAll" type="button">Download all PDFs</button><button id="pcZip" type="button" class="alt">Download as ZIP</button></div>
 </div>
 
@@ -79,7 +68,13 @@ var files=[],done=[];
 $('pcFiles').onchange=function(e){files=Array.prototype.slice.call(e.target.files);$('pcList').textContent=files.length?files.length+' file(s): '+files.map(function(f){return f.name}).join(', '):'No files selected.'};
 if(!window.PDFLib||!window.pdfjsLib){$('pcStatus').textContent='Could not load PDF libraries. Check your connection and reload.';$('pcStatus').className='status err';return}
 pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-var PDFDocument=PDFLib.PDFDocument,PDFName=PDFLib.PDFName,PDFDict=PDFLib.PDFDict,rgb=PDFLib.rgb;
+var PDFDocument=PDFLib.PDFDocument,PDFName=PDFLib.PDFName,PDFDict=PDFLib.PDFDict,PDFString=PDFLib.PDFString,rgb=PDFLib.rgb;
+
+function fixUrl(u){u=(u||'').trim();return u&&!/^https?:\/\//i.test(u)?'https://'+u:u}
+function addLink(pdf,page,x,y,w,h,url){
+  var a=pdf.context.obj({Type:'Annot',Subtype:'Link',Rect:[x,y,x+w,y+h],Border:[0,0,0],A:{Type:'Action',S:'URI',URI:PDFString.of(url)}});
+  page.node.addAnnot(pdf.context.register(a));
+}
 
 async function clean(file,o){
   var buf=await file.arrayBuffer(),log=[],drop=new Set(),n=0;
@@ -95,7 +90,7 @@ async function clean(file,o){
         var ann=await p.getAnnotations();
         var urls=ann.map(function(a){return(a.url||a.unsafeUrl||'')}).join(' ').toLowerCase();
         var hit=o.kws.some(function(k){return text.indexOf(k)>-1||urls.indexOf(k)>-1});
-        if(hit&&text.length<o.maxText)drop.add(i-1);
+        if(hit&&text.length<600)drop.add(i-1);
       }
     }
     await doc.destroy();
@@ -108,7 +103,7 @@ async function clean(file,o){
   if(o.links){
     var c=0;
     pdf.getPages().forEach(function(pg){var a=pg.node.Annots();if(a)c+=a.size();pg.node.delete(PDFName.of('Annots'))});
-    log.push(c+' link/annotation'+(c===1?'':'s')+' removed');
+    log.push(c+' link(s) removed');
   }
   if(o.meta){
     var cat=pdf.catalog;
@@ -120,13 +115,34 @@ async function clean(file,o){
   }
   if(o.foot){
     try{
-      var f=await pdf.embedFont(PDFLib.StandardFonts.Helvetica);
-      pdf.getPages().forEach(function(pg){
-        var w=pg.getWidth(),s=Math.max(8,w*0.016),tw=f.widthOfTextAtSize(o.foot,s);
-        pg.drawText(o.foot,{x:Math.max(4,(w-tw)/2),y:s*0.9,size:s,font:f,color:rgb(.25,.25,.25)});
+      var f=await pdf.embedFont(PDFLib.StandardFonts.Helvetica),fc=0;
+      pdf.getPages().forEach(function(pg,idx){
+        if(idx<o.skip)return;
+        var w=pg.getWidth(),s=Math.max(8,w*0.016),tw=f.widthOfTextAtSize(o.foot,s),x=Math.max(4,(w-tw)/2);
+        pg.drawText(o.foot,{x:x,y:s*0.9,size:s,font:f,color:rgb(.25,.25,.25)});
+        if(o.footUrl)addLink(pdf,pg,x,s*0.5,tw,s*1.4,o.footUrl);
+        fc++;
       });
-      log.push('footer added');
+      log.push(fc?('footer'+(o.footUrl?' + link':'')+' added from page '+(o.skip+1)):'footer skipped (PDF has '+o.skip+' pages or fewer)');
     }catch(e){log.push('footer skipped (use English letters only)')}
+  }
+  if(o.promo){
+    try{
+      var sz=pdf.getPage(0).getSize(),W=sz.width,H=sz.height,items=[];
+      if(o.promo.kind==='pdf'){(await pdf.embedPdf(o.promo.bytes.slice(0))).forEach(function(p){items.push({o:p,w:p.width,h:p.height,pdf:1})})}
+      else{var im=o.promo.kind==='png'?await pdf.embedPng(o.promo.bytes.slice(0)):await pdf.embedJpg(o.promo.bytes.slice(0));items.push({o:im,w:im.width,h:im.height})}
+      var build=function(at){
+        items.forEach(function(it,j){
+          var pg=pdf.insertPage(at+j,[W,H]),s=Math.min(W/it.w,H/it.h),w=it.w*s,h=it.h*s,x=(W-w)/2,y=(H-h)/2;
+          if(it.pdf)pg.drawPage(it.o,{x:x,y:y,width:w,height:h});else pg.drawImage(it.o,{x:x,y:y,width:w,height:h});
+          if(o.promoUrl)addLink(pdf,pg,0,0,W,H,o.promoUrl);
+        });
+      };
+      var total=pdf.getPageCount();
+      if(o.pos==='midend'||o.pos==='middle')build(Math.max(1,Math.floor(total/2)));
+      if(o.pos==='midend'||o.pos==='end')build(pdf.getPageCount());
+      log.push('promo page added');
+    }catch(e){log.push('promo page skipped (use a PNG, JPG or PDF)')}
   }
   var bytes=await pdf.save();
   return{bytes:bytes,log:log.join(' · ')||'no changes selected'};
@@ -134,9 +150,16 @@ async function clean(file,o){
 
 $('pcGo').onclick=async function(){
   if(!files.length){$('pcStatus').textContent='Select at least one PDF first.';$('pcStatus').className='status err';return}
+  var sk=parseInt($('oSkip').value,10);
   var o={links:$('oLinks').checked,meta:$('oMeta').checked,pages:$('oPages').checked,first:$('oFirst').checked,last:$('oLast').checked,
     kws:$('oKw').value.split(',').map(function(s){return s.trim().toLowerCase()}).filter(Boolean),
-    maxText:600,foot:$('oFoot').value.trim()};
+    foot:$('oFoot').value.trim(),footUrl:fixUrl($('oFootUrl').value),skip:isNaN(sk)?5:Math.max(0,sk),
+    pos:$('oPos').value,promoUrl:fixUrl($('oPromoUrl').value)};
+  var pf=$('oPromo').files[0];
+  if(pf){
+    var kind=/pdf/i.test(pf.type)||/\.pdf$/i.test(pf.name)?'pdf':(/png/i.test(pf.type)||/\.png$/i.test(pf.name)?'png':'jpg');
+    o.promo={kind:kind,bytes:await pf.arrayBuffer()};
+  }
   var btn=$('pcGo');btn.disabled=true;$('pcStatus').className='status';
   done.forEach(function(d){URL.revokeObjectURL(d.url)});done=[];$('pcOut').innerHTML='';
   for(var i=0;i<files.length;i++){
@@ -157,7 +180,6 @@ $('pcGo').onclick=async function(){
   $('pcStatus').textContent='Done: '+done.length+' of '+files.length+' processed.';
   btn.disabled=false;
 };
-
 $('pcAll').onclick=function(){
   done.forEach(function(d,i){setTimeout(function(){var a=document.createElement('a');a.href=d.url;a.download=d.name;document.body.appendChild(a);a.click();a.remove()},i*400)});
 };
@@ -170,5 +192,4 @@ $('pcZip').onclick=async function(){
 })();
 </script>
 </div>
-</body>
-</html>
+</body></html>
