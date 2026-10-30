@@ -71,6 +71,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/p
 var PDFDocument=PDFLib.PDFDocument,PDFName=PDFLib.PDFName,PDFDict=PDFLib.PDFDict,PDFString=PDFLib.PDFString,rgb=PDFLib.rgb;
 
 function fixUrl(u){u=(u||'').trim();return u&&!/^https?:\/\//i.test(u)?'https://'+u:u}
+function outName(n){return n.replace(/\.pdf$/i,'')+'-.pdf'}
 function addLink(pdf,page,x,y,w,h,url){
   var a=pdf.context.obj({Type:'Annot',Subtype:'Link',Rect:[x,y,x+w,y+h],Border:[0,0,0],A:{Type:'Action',S:'URI',URI:PDFString.of(url)}});
   page.node.addAnnot(pdf.context.register(a));
@@ -168,7 +169,7 @@ $('pcGo').onclick=async function(){
     var info=document.createElement('div'),nameEl=document.createElement('b'),logEl=document.createElement('span');
     nameEl.textContent=files[i].name;info.appendChild(nameEl);info.appendChild(logEl);item.appendChild(info);
     try{
-      var r=await clean(files[i],o),name=files[i].name;
+      var r=await clean(files[i],o),name=outName(files[i].name);
       var url=URL.createObjectURL(new Blob([r.bytes],{type:'application/pdf'}));
       done.push({name:name,url:url,bytes:r.bytes});
       logEl.textContent=r.log;
