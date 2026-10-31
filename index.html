@@ -41,6 +41,16 @@
 <fieldset><legend>Add my footer (optional)</legend>
 <input type="text" id="oFoot" placeholder="Footer text, e.g. Join CUET Network">
 <input type="text" id="oFootUrl" placeholder="Footer link, e.g. t.me/cuetnetwork (tappable)">
+<small style="margin-top:8px">Footer font:</small>
+<select id="oFont" aria-label="Footer font">
+<option value="helvb">Arial style, bold</option>
+<option value="helv">Arial style, regular</option>
+<option value="times">Times style, regular (serif)</option>
+<option value="timesb">Times style, bold (serif)</option>
+<option value="cour">Courier style (typewriter)</option>
+</select>
+<small style="margin-top:8px">Footer size in points (leave empty for automatic, e.g. 10 or 12):</small>
+<input type="number" id="oSize" placeholder="Automatic" min="4" max="60" step="0.5" inputmode="decimal">
 <small style="margin-top:8px">Skip the footer on the first this many pages:</small>
 <input type="number" id="oSkip" value="5" min="0" max="50" inputmode="numeric">
 </fieldset>
@@ -69,6 +79,7 @@ $('pcFiles').onchange=function(e){files=Array.prototype.slice.call(e.target.file
 if(!window.PDFLib||!window.pdfjsLib){$('pcStatus').textContent='Could not load PDF libraries. Check your connection and reload.';$('pcStatus').className='status err';return}
 pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 var PDFDocument=PDFLib.PDFDocument,PDFName=PDFLib.PDFName,PDFDict=PDFLib.PDFDict,PDFString=PDFLib.PDFString,rgb=PDFLib.rgb;
+var FONTS={helv:'Helvetica',helvb:'HelveticaBold',times:'TimesRoman',timesb:'TimesRomanBold',cour:'Courier'};
 
 function fixUrl(u){u=(u||'').trim();return u&&!/^https?:\/\//i.test(u)?'https://'+u:u}
 function outName(n){return n.replace(/\.pdf$/i,'')+'-.pdf'}
@@ -116,11 +127,11 @@ async function clean(file,o){
   }
   if(o.foot){
     try{
-      var f=await pdf.embedFont(PDFLib.StandardFonts.Helvetica),fc=0;
+      var f=await pdf.embedFont(PDFLib.StandardFonts[FONTS[o.font]||'HelveticaBold']),fc=0;
       pdf.getPages().forEach(function(pg,idx){
         if(idx<o.skip)return;
-        var w=pg.getWidth(),s=Math.max(8,w*0.016),tw=f.widthOfTextAtSize(o.foot,s),x=Math.max(4,(w-tw)/2);
-        pg.drawText(o.foot,{x:x,y:s*0.9,size:s,font:f,color:rgb(.25,.25,.25)});
+        var w=pg.getWidth(),s=o.size||Math.max(8,w*0.016),tw=f.widthOfTextAtSize(o.foot,s),x=Math.max(4,(w-tw)/2);
+        pg.drawText(o.foot,{x:x,y:s*0.9,size:s,font:f,color:rgb(.2,.2,.2)});
         if(o.footUrl)addLink(pdf,pg,x,s*0.5,tw,s*1.4,o.footUrl);
         fc++;
       });
@@ -151,10 +162,10 @@ async function clean(file,o){
 
 $('pcGo').onclick=async function(){
   if(!files.length){$('pcStatus').textContent='Select at least one PDF first.';$('pcStatus').className='status err';return}
-  var sk=parseInt($('oSkip').value,10);
+  var sk=parseInt($('oSkip').value,10),fs=parseFloat($('oSize').value);
   var o={links:$('oLinks').checked,meta:$('oMeta').checked,pages:$('oPages').checked,first:$('oFirst').checked,last:$('oLast').checked,
     kws:$('oKw').value.split(',').map(function(s){return s.trim().toLowerCase()}).filter(Boolean),
-    foot:$('oFoot').value.trim(),footUrl:fixUrl($('oFootUrl').value),skip:isNaN(sk)?5:Math.max(0,sk),
+    foot:$('oFoot').value.trim(),footUrl:fixUrl($('oFootUrl').value),font:$('oFont').value,size:fs>0?fs:0,skip:isNaN(sk)?5:Math.max(0,sk),
     pos:$('oPos').value,promoUrl:fixUrl($('oPromoUrl').value)};
   var pf=$('oPromo').files[0];
   if(pf){
